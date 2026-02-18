@@ -40,7 +40,8 @@ Deno.serve(async (req) => {
       if (error.code === "23505") {
         return new Response(
           JSON.stringify({
-            error: "Ta e-poštni naslov je že registriran.",
+            error: "duplicate_email",
+            message: "Podvojeni vnosi popačijo podatke.",
           }),
           {
             status: 409,
