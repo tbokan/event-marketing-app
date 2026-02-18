@@ -5,9 +5,9 @@ import type { ProfileAnswer } from "@/types";
 // ---------------------------------------------------------------------------
 export const uiContent = {
   welcome: {
-    title: "YOUR TITLE HERE",
-    subtitle: "YOUR SUBTITLE HERE",
-    copy: "YOUR COPY HERE",
+    title: "Algoritem te (še) ni nadomestil.",
+    subtitle: "Zdaj dela za tebe.",
+    copy: "Preveri e-mail. Če ga ne najdeš, poglej tudi v spam.",
     button: "Začni",
   },
   step1: {
@@ -35,7 +35,7 @@ export const uiContent = {
   },
   closed: {
     title: "Prijave so zaprte",
-    message: "Hvala za zanimanje! Prijave na ta dogodek so žal že zaprte.",
+    message: "Navadi se, da se svet hitro spreminja.",
   },
 };
 
@@ -119,19 +119,19 @@ export const emailTemplates: Record<
       html: (vars) =>
         emailShell(`
         <h1>Rezultati so tu, ${vars.name}!</h1>
-        <p>Hvala za sodelovanje na našem dogodku.</p>
+        <p>Hvala za sodelovanje na predavanju.</p>
         <p>Porazdelitev odgovorov:</p>
         <ul>${vars.resultsHtml}</ul>
-        <p>Hvala, da ste del naše skupnosti!</p>
+        <p>Hvala, da si del naše skupnosti!</p>
       `),
     },
     reminder: {
-      subject: "Ste izvedli svoj mini izziv?",
+      subject: "Si zaključil/a svoj mini izziv?",
       html: (vars) =>
         emailShell(`
-        <h1>Spomin na vaš izziv, ${vars.name}!</h1>
-        <p>Pred tednom dni ste prejeli mini izziv iz področja podatkovnega marketinga.</p>
-        <p>Kako vam gre? Delite vaše rezultate z nami:</p>
+        <h1>Opomnik za izziv ${vars.name}!</h1>
+        <p>Pred tednom dni si prejel/a mini izziv iz področja podatkovnega marketinga.</p>
+        <p>Kako ti je šlo? Deli svoje rezultate z nami:</p>
         <p><a href="${vars.mailtoLink}" style="display:inline-block;padding:12px 24px;background:#3b82f6;color:#fff;border-radius:8px;text-decoration:none;">Pošlji odgovor</a></p>
       `),
     },
