@@ -4,6 +4,12 @@ import type { ProfileAnswer } from "@/types";
 // UI COPY
 // ---------------------------------------------------------------------------
 export const uiContent = {
+  welcome: {
+    title: "YOUR TITLE HERE",
+    subtitle: "YOUR SUBTITLE HERE",
+    copy: "YOUR COPY HERE",
+    button: "Začni",
+  },
   step1: {
     title: "Kako ti je ime?",
     nameLabel: "Ime",

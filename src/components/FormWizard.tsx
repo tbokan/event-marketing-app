@@ -3,6 +3,7 @@ import { toast } from "sonner";
 import { useFormWizard } from "@/hooks/useFormWizard";
 import { useSubmission } from "@/hooks/useSubmission";
 import { ProgressDots } from "@/components/ProgressDots";
+import { StepWelcome } from "@/components/steps/StepWelcome";
 import { StepName } from "@/components/steps/StepName";
 import { StepEmail } from "@/components/steps/StepEmail";
 import { StepProfile } from "@/components/steps/StepProfile";
@@ -75,13 +76,15 @@ export function FormWizard() {
   const renderStep = () => {
     switch (currentStep) {
       case 0:
+        return <StepWelcome onNext={goNext} />;
+      case 1:
         return (
           <StepName
             defaultValues={formData}
             onNext={handleNameNext}
           />
         );
-      case 1:
+      case 2:
         return (
           <StepEmail
             defaultValues={formData}
@@ -89,7 +92,7 @@ export function FormWizard() {
             onBack={goBack}
           />
         );
-      case 2:
+      case 3:
         return (
           <StepProfile
             defaultValues={formData}
@@ -98,7 +101,7 @@ export function FormWizard() {
             isSubmitting={submission.isPending}
           />
         );
-      case 3:
+      case 4:
         return isSubmitted && formData.answer ? (
           <StepResults userAnswer={formData.answer} />
         ) : null;
@@ -110,7 +113,7 @@ export function FormWizard() {
   return (
     <div className="relative min-h-dvh overflow-hidden">
       <div className="fixed left-0 right-0 top-0 z-10 pt-6">
-        <ProgressDots currentStep={currentStep} totalSteps={4} />
+        <ProgressDots currentStep={currentStep} totalSteps={5} />
       </div>
 
       <AnimatePresence mode="wait" custom={direction}>

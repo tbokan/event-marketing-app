@@ -19,7 +19,7 @@ export function useFormWizard() {
   const goNext = useCallback(() => {
     setState((prev) => ({
       ...prev,
-      currentStep: Math.min(prev.currentStep + 1, 3),
+      currentStep: Math.min(prev.currentStep + 1, 4),
       direction: "forward",
     }));
   }, []);
