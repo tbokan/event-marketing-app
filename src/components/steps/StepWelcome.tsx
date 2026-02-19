@@ -8,9 +8,9 @@ export function StepWelcome({ onNext }: StepWelcomeProps) {
   return (
     <div className="flex min-h-dvh flex-col items-center justify-center px-6">
       <img
-        src="/logo-placeholder.svg"
+        src="/ps-logo.svg"
         alt="Logo"
-        className="mb-8 h-24 w-24"
+        className="mb-8 h-24 w-24 rounded-[20%]"
       />
 
       <h1 className="text-center text-3xl font-bold">

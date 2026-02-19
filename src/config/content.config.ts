@@ -5,9 +5,9 @@ import type { ProfileAnswer } from "@/types";
 // ---------------------------------------------------------------------------
 export const uiContent = {
   welcome: {
-    title: "Algoritem te (še) ni nadomestil.",
-    subtitle: "Zdaj dela za tebe.",
-    copy: "Preveri e-mail. Če ga ne najdeš, poglej tudi v spam.",
+    title: "Hvala za sodelovanje",
+    subtitle: "To pomeni, da nisi zaspal/a.",
+    copy: "Podatke bomo uporabili izključno za demonstracijo in pošiljanje personaliziranega e-maila.",
     button: "Začni",
   },
   step1: {
