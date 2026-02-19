@@ -8,7 +8,7 @@ export function StepWelcome({ onNext }: StepWelcomeProps) {
   return (
     <div className="flex min-h-dvh flex-col items-center justify-center px-6">
       <img
-        src="/ps-logo.svg"
+        src="/PS-logo.svg"
         alt="Logo"
         className="mb-8 h-24 w-24 rounded-[20%]"
       />
