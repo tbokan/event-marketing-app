@@ -35,7 +35,7 @@ export function StepEmail({ defaultValues, onNext, onBack }: StepEmailProps) {
 
   const emailValue = form.watch("email");
   console.log("[typo-debug] StepEmail render, emailValue:", JSON.stringify(emailValue));
-  const { suggestion, acceptSuggestion, dismissSuggestion } =
+  const { suggestion, acceptSuggestion } =
     useEmailTypoSuggestion(emailValue);
   console.log("[typo-debug] suggestion:", suggestion);
 

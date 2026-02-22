@@ -61,10 +61,10 @@ export function PieChart({ data, userAnswer }: PieChartProps) {
               ))}
             </Pie>
             <Tooltip
-              formatter={(value: number, name: string) => [
-                `${value} odgovorov`,
-                name,
-              ]}
+              formatter={(value: number | undefined, name: string) => {
+                if (value === undefined) return ["", ""];
+                return [`${value} odgovorov`, name];
+              }}
               contentStyle={{
                 borderRadius: "8px",
                 border: "none",
