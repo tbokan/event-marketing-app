@@ -124,7 +124,10 @@ export function FormWizard() {
           initial="enter"
           animate="center"
           exit="exit"
-          transition={{ duration: 0.3, ease: "easeInOut" }}
+          transition={{
+            x: { type: "tween", ease: "easeInOut", duration: 0.4 },
+            opacity: { duration: 0.3 },
+          }}
         >
           {renderStep()}
         </motion.div>
