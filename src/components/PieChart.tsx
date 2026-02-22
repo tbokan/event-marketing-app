@@ -61,9 +61,9 @@ export function PieChart({ data, userAnswer }: PieChartProps) {
               ))}
             </Pie>
             <Tooltip
-              formatter={(value: number | undefined, name: string) => {
-                if (value === undefined) return ["", ""];
-                return [`${value} odgovorov`, name];
+              formatter={(value: number | undefined, name: string | undefined): [string, string] => {
+                if (value === undefined || name === undefined) return ["", ""];
+                return [`${value}%`, name];
               }}
               contentStyle={{
                 borderRadius: "8px",
