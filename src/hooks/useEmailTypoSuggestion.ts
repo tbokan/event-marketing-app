@@ -6,14 +6,17 @@ export function useEmailTypoSuggestion(emailValue: string) {
   const dismissedDomainRef = useRef<string | null>(null);
 
   useEffect(() => {
+    console.log("[typo-debug] useEffect fired, emailValue:", JSON.stringify(emailValue));
     if (!emailValue || !emailValue.includes("@")) {
       setSuggestion(null);
       return;
     }
 
     const timer = setTimeout(() => {
+      console.log("[typo-debug] timer fired for:", JSON.stringify(emailValue));
       const parts = emailValue.split("@");
       if (parts.length !== 2 || !parts[1]) {
+        console.log("[typo-debug] invalid parts, skipping");
         setSuggestion(null);
         return;
       }
@@ -22,10 +25,12 @@ export function useEmailTypoSuggestion(emailValue: string) {
       const lowerDomain = domain.toLowerCase();
 
       if (lowerDomain === dismissedDomainRef.current) {
+        console.log("[typo-debug] domain dismissed, skipping");
         return;
       }
 
       const suggested = findClosestDomain(lowerDomain);
+      console.log("[typo-debug] suggested:", suggested);
       if (suggested) {
         setSuggestion(`${localPart}@${suggested}`);
       } else {

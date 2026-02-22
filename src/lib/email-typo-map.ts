@@ -78,8 +78,15 @@ function levenshtein(a: string, b: string): number {
 }
 
 export function findClosestDomain(domain: string): string | null {
-  if (KNOWN_DOMAINS.includes(domain)) return null;
-  if (EMAIL_TYPO_MAP[domain]) return EMAIL_TYPO_MAP[domain];
+  console.log("[typo-debug] findClosestDomain called with:", JSON.stringify(domain));
+  if (KNOWN_DOMAINS.includes(domain)) {
+    console.log("[typo-debug] domain is known, returning null");
+    return null;
+  }
+  if (EMAIL_TYPO_MAP[domain]) {
+    console.log("[typo-debug] exact typo match:", EMAIL_TYPO_MAP[domain]);
+    return EMAIL_TYPO_MAP[domain];
+  }
 
   let bestMatch: string | null = null;
   let bestDistance = Infinity;
