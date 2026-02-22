@@ -27,7 +27,7 @@ export function StepWelcome({ onNext }: StepWelcomeProps) {
 
       <button
         onClick={onNext}
-        className="mt-10 w-full max-w-sm rounded-lg bg-[#ffd541] px-6 py-3.5 text-base font-semibold text-black transition-opacity hover:opacity-90 active:opacity-80"
+        className="mt-10 w-full max-w-sm rounded-lg bg-[#ffd541] px-6 py-3.5 text-base font-semibold text-black transition-all duration-150 hover:opacity-90 active:scale-[0.97] active:opacity-80"
       >
         {uiContent.welcome.button}
       </button>

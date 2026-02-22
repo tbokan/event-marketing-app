@@ -1,25 +1,40 @@
-import { useState, useCallback } from "react";
-import { EMAIL_TYPO_MAP } from "@/lib/email-typo-map";
+import { useState, useEffect, useCallback, useRef } from "react";
+import { findClosestDomain } from "@/lib/email-typo-map";
 
-export function useEmailTypoSuggestion() {
+export function useEmailTypoSuggestion(emailValue: string) {
   const [suggestion, setSuggestion] = useState<string | null>(null);
+  const dismissedDomainRef = useRef<string | null>(null);
 
-  const checkEmail = useCallback((email: string) => {
-    const parts = email.split("@");
-    if (parts.length !== 2) {
+  useEffect(() => {
+    if (!emailValue || !emailValue.includes("@")) {
       setSuggestion(null);
       return;
     }
 
-    const [localPart, domain] = parts;
-    const lowerDomain = domain.toLowerCase();
+    const timer = setTimeout(() => {
+      const parts = emailValue.split("@");
+      if (parts.length !== 2 || !parts[1]) {
+        setSuggestion(null);
+        return;
+      }
 
-    if (EMAIL_TYPO_MAP[lowerDomain]) {
-      setSuggestion(`${localPart}@${EMAIL_TYPO_MAP[lowerDomain]}`);
-    } else {
-      setSuggestion(null);
-    }
-  }, []);
+      const [localPart, domain] = parts;
+      const lowerDomain = domain.toLowerCase();
+
+      if (lowerDomain === dismissedDomainRef.current) {
+        return;
+      }
+
+      const suggested = findClosestDomain(lowerDomain);
+      if (suggested) {
+        setSuggestion(`${localPart}@${suggested}`);
+      } else {
+        setSuggestion(null);
+      }
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [emailValue]);
 
   const acceptSuggestion = useCallback(() => {
     const accepted = suggestion;
@@ -28,8 +43,12 @@ export function useEmailTypoSuggestion() {
   }, [suggestion]);
 
   const dismissSuggestion = useCallback(() => {
+    if (suggestion) {
+      const domain = suggestion.split("@")[1];
+      dismissedDomainRef.current = domain;
+    }
     setSuggestion(null);
-  }, []);
+  }, [suggestion]);
 
-  return { suggestion, checkEmail, acceptSuggestion, dismissSuggestion };
+  return { suggestion, acceptSuggestion, dismissSuggestion };
 }

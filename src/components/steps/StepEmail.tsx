@@ -33,8 +33,9 @@ export function StepEmail({ defaultValues, onNext, onBack }: StepEmailProps) {
     },
   });
 
-  const { suggestion, checkEmail, acceptSuggestion, dismissSuggestion } =
-    useEmailTypoSuggestion();
+  const emailValue = form.watch("email");
+  const { suggestion, acceptSuggestion, dismissSuggestion } =
+    useEmailTypoSuggestion(emailValue);
 
   const handleAcceptSuggestion = () => {
     const corrected = acceptSuggestion();
@@ -88,10 +89,6 @@ export function StepEmail({ defaultValues, onNext, onBack }: StepEmailProps) {
                     placeholder={uiContent.step2.emailPlaceholder}
                     autoComplete="email"
                     {...field}
-                    onBlur={(e) => {
-                      field.onBlur();
-                      checkEmail(e.target.value);
-                    }}
                   />
                 </FormControl>
                 <FormMessage />
@@ -100,31 +97,17 @@ export function StepEmail({ defaultValues, onNext, onBack }: StepEmailProps) {
           />
 
           {suggestion && (
-            <div className="rounded-lg border border-primary/30 bg-primary/5 p-3">
-              <p className="text-sm">
-                {uiContent.step2.typoSuggestion.replace(
-                  "{suggestion}",
-                  suggestion
-                )}
-              </p>
-              <div className="mt-2 flex gap-2">
-                <Button
-                  type="button"
-                  size="sm"
-                  onClick={handleAcceptSuggestion}
-                >
-                  Da
-                </Button>
-                <Button
-                  type="button"
-                  size="sm"
-                  variant="ghost"
-                  onClick={dismissSuggestion}
-                >
-                  Ne
-                </Button>
-              </div>
-            </div>
+            <button
+              type="button"
+              className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+              onClick={handleAcceptSuggestion}
+            >
+              Si mislil/a{" "}
+              <span className="font-medium underline">
+                @{suggestion.split("@")[1]}
+              </span>
+              ?
+            </button>
           )}
 
           <div className="flex gap-3">
