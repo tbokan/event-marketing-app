@@ -15,18 +15,15 @@ import type { ProfileFormValues } from "@/lib/validators";
 
 const slideVariants = {
   enter: (direction: "forward" | "backward") => ({
-    x: direction === "forward" ? 300 : -300,
-    y: 10,
+    x: direction === "forward" ? "100%" : "-100%",
     opacity: 0,
   }),
   center: {
     x: 0,
-    y: 0,
     opacity: 1,
   },
   exit: (direction: "forward" | "backward") => ({
-    x: direction === "forward" ? -300 : 300,
-    y: 10,
+    x: direction === "forward" ? "-100%" : "100%",
     opacity: 0,
   }),
 };
