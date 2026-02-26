@@ -18,23 +18,26 @@ Deno.serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
 
-    // 1. Fetch all submissions
+    // 1. Fetch only submissions that haven't received reminder yet
     const { data: submissions, error } = await supabase
       .from("submissions")
-      .select("*");
+      .select("*")
+      .is("reminder_email_sent_at", null);
 
     if (error) throw error;
     if (!submissions?.length) {
       return new Response(
-        JSON.stringify({ message: "No submissions" }),
+        JSON.stringify({ message: "No pending submissions" }),
         {
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         }
       );
     }
 
-    // 2. Send reminder to each submission
+    // 2. Send reminder to each pending submission
     let sent = 0;
+    const failed: string[] = [];
+
     for (const sub of submissions) {
       const profileLabel = getProfileLabel(sub.answer);
       const mailtoLink = buildMailtoLink(profileLabel);
@@ -47,7 +50,14 @@ Deno.serve(async (req) => {
           template.html({ name: sub.name, mailtoLink })
         );
         sent++;
+
+        // Mark as sent
+        await supabase
+          .from("submissions")
+          .update({ reminder_email_sent_at: new Date().toISOString() })
+          .eq("id", sub.id);
       } catch (emailErr) {
+        failed.push(sub.email);
         console.error(
           `Failed to send to ${sub.email}:`,
           emailErr instanceof Error ? emailErr.message : emailErr
@@ -60,7 +70,7 @@ Deno.serve(async (req) => {
     }
 
     return new Response(
-      JSON.stringify({ sent, total: submissions.length }),
+      JSON.stringify({ sent, total: submissions.length, failed }),
       {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       }

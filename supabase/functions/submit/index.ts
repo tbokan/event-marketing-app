@@ -63,12 +63,17 @@ Deno.serve(async (req) => {
     try {
       console.log("[submit] Building template for answer:", answer);
       const template = getImmediateTemplate(answer);
-      console.log("[submit] Template subject:", template.subject);
       const html = template.html({ name });
       console.log("[submit] Sending email to:", email);
       await sendEmail(email, template.subject, html);
       emailSent = true;
       console.log("[submit] Email sent successfully");
+
+      // Track delivery timestamp
+      await supabase
+        .from("submissions")
+        .update({ immediate_email_sent_at: new Date().toISOString() })
+        .eq("id", data.id);
     } catch (emailErr) {
       console.error("[submit] Email failed:", emailErr instanceof Error ? emailErr.message : emailErr);
     }

@@ -17,33 +17,40 @@ Deno.serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
 
-    // 1. Fetch all submissions
+    // 1. Fetch only submissions that haven't received results yet
     const { data: submissions, error } = await supabase
       .from("submissions")
-      .select("*");
+      .select("*")
+      .is("results_email_sent_at", null);
 
     if (error) throw error;
     if (!submissions?.length) {
       return new Response(
-        JSON.stringify({ message: "No submissions" }),
+        JSON.stringify({ message: "No pending submissions" }),
         {
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         }
       );
     }
 
-    // 2. Calculate results distribution
+    // 2. Fetch total counts for distribution (across ALL submissions)
+    const { data: allSubmissions, error: countError } = await supabase
+      .from("submissions")
+      .select("answer");
+
+    if (countError) throw countError;
+
     const counts: Record<string, number> = {
       podatkovni: 0,
       produktni: 0,
       performance: 0,
       ne_vem: 0,
     };
-    submissions.forEach((s) => {
+    allSubmissions!.forEach((s) => {
       if (counts[s.answer] !== undefined) counts[s.answer]++;
     });
 
-    const total = submissions.length;
+    const total = allSubmissions!.length;
     const resultsHtml = Object.entries(counts)
       .map(([key, count]) => {
         const pct = Math.round((count / total) * 100);
@@ -52,8 +59,10 @@ Deno.serve(async (req) => {
       })
       .join("");
 
-    // 3. Send email to each submission
+    // 3. Send email to each pending submission
     let sent = 0;
+    const failed: string[] = [];
+
     for (const sub of submissions) {
       const template = getResultsTemplate(sub.answer);
       try {
@@ -63,7 +72,14 @@ Deno.serve(async (req) => {
           template.html({ name: sub.name, resultsHtml })
         );
         sent++;
+
+        // Mark as sent
+        await supabase
+          .from("submissions")
+          .update({ results_email_sent_at: new Date().toISOString() })
+          .eq("id", sub.id);
       } catch (emailErr) {
+        failed.push(sub.email);
         console.error(
           `Failed to send to ${sub.email}:`,
           emailErr instanceof Error ? emailErr.message : emailErr
@@ -76,7 +92,7 @@ Deno.serve(async (req) => {
     }
 
     return new Response(
-      JSON.stringify({ sent, total: submissions.length }),
+      JSON.stringify({ sent, total: submissions.length, failed }),
       {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       }

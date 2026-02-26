@@ -17,6 +17,9 @@ export type Database = {
           email: string;
           answer: string;
           created_at: string;
+          immediate_email_sent_at: string | null;
+          results_email_sent_at: string | null;
+          reminder_email_sent_at: string | null;
         };
         Insert: {
           id?: string;
@@ -25,6 +28,9 @@ export type Database = {
           email: string;
           answer: string;
           created_at?: string;
+          immediate_email_sent_at?: string | null;
+          results_email_sent_at?: string | null;
+          reminder_email_sent_at?: string | null;
         };
         Update: {
           id?: string;
@@ -33,6 +39,9 @@ export type Database = {
           email?: string;
           answer?: string;
           created_at?: string;
+          immediate_email_sent_at?: string | null;
+          results_email_sent_at?: string | null;
+          reminder_email_sent_at?: string | null;
         };
         Relationships: [];
       };
