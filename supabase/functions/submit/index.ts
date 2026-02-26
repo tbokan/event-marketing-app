@@ -10,10 +10,12 @@ Deno.serve(async (req) => {
 
   try {
     const { name, lastname, email, answer } = await req.json();
+    console.log("[submit] Received:", { name, lastname, email, answer });
 
     // 1. Deadline check (server-side)
     const deadline = Deno.env.get("SUBMISSION_DEADLINE");
     if (deadline && new Date() > new Date(deadline)) {
+      console.log("[submit] Rejected: past deadline", deadline);
       return new Response(
         JSON.stringify({ error: "Prijave so zaprte." }),
         {
@@ -30,6 +32,7 @@ Deno.serve(async (req) => {
     );
 
     // 3. Insert submission (unique email constraint handles duplicates)
+    console.log("[submit] Inserting into DB...");
     const { data, error } = await supabase
       .from("submissions")
       .insert({ name, lastname, email, answer })
@@ -38,6 +41,7 @@ Deno.serve(async (req) => {
 
     if (error) {
       if (error.code === "23505") {
+        console.log("[submit] Duplicate email:", email);
         return new Response(
           JSON.stringify({
             error: "duplicate_email",
@@ -51,18 +55,32 @@ Deno.serve(async (req) => {
       }
       throw error;
     }
+    console.log("[submit] DB insert OK, id:", data.id);
 
     // 4. Send immediate profile-specific email
-    const template = getImmediateTemplate(answer);
-    await sendEmail(email, template.subject, template.html({ name }));
+    // Email failure should NOT fail the whole request (DB insert already succeeded)
+    let emailSent = false;
+    try {
+      console.log("[submit] Building template for answer:", answer);
+      const template = getImmediateTemplate(answer);
+      console.log("[submit] Template subject:", template.subject);
+      const html = template.html({ name });
+      console.log("[submit] Sending email to:", email);
+      await sendEmail(email, template.subject, html);
+      emailSent = true;
+      console.log("[submit] Email sent successfully");
+    } catch (emailErr) {
+      console.error("[submit] Email failed:", emailErr instanceof Error ? emailErr.message : emailErr);
+    }
 
     return new Response(
-      JSON.stringify({ success: true, id: data.id }),
+      JSON.stringify({ success: true, id: data.id, emailSent }),
       {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       }
     );
   } catch (err) {
+    console.error("[submit] Fatal error:", err instanceof Error ? err.message : err);
     const message = err instanceof Error ? err.message : "Unknown error";
     return new Response(JSON.stringify({ error: message }), {
       status: 500,
